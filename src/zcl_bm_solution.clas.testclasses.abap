@@ -1,0 +1,58 @@
+CLASS ltcl_find_flights DEFINITION FINAL FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS.
+
+  PRIVATE SECTION.
+    CLASS-METHODS:
+      class_setup.
+    CLASS-DATA the_carrier TYPE REF TO lcl_carrier.
+    CLASS-DATA some_flight_data TYPE zlrn_cargoflight.
+    METHODS:
+      test_find_cargo_flight FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+
+CLASS ltcl_find_flights IMPLEMENTATION.
+
+  METHOD class_setup.
+    SELECT SINGLE
+      FROM zlrn_cargoflight
+      FIELDS carrier_id, connection_id, flight_date, airport_from_id, airport_to_id
+      INTO CORRESPONDING FIELDS OF @some_flight_data.
+
+    IF sy-subrc <> 0.
+      cl_abap_unit_assert=>fail( 'No data in DB zlrn_cargoflight' ).
+    ENDIF.
+
+    TRY.
+        the_carrier = NEW #( i_carrier_id = some_flight_data-carrier_id ).
+      CATCH cx_abap_invalid_value.
+        cl_abap_unit_assert=>fail( 'Unable to instantiate lcl_carrier' ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD test_find_cargo_flight.
+    the_carrier->find_cargo_flight(
+      EXPORTING
+        i_airport_from_id = some_flight_data-airport_from_id
+        i_airport_to_id   = some_flight_data-airport_to_id
+        i_from_date       = some_flight_data-flight_date
+        i_cargo           = 1
+      IMPORTING
+        e_flight          = DATA(flight)
+        e_days_later      = DATA(days_later)
+    ).
+
+    cl_abap_unit_assert=>assert_bound(
+      act = flight
+      msg = 'Method find_cargo_flight does not find a result'
+    ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = days_later
+      exp = 0
+      msg = 'Method find_cargo_flight returns wrong result'
+    ).
+  ENDMETHOD.
+
+ENDCLASS.

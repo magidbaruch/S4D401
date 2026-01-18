@@ -1,0 +1,12 @@
+//@EndUserText.label: 'connections test'
+//@MappingRole: true
+//define role ZCONNECTIONS {
+//  grant select on ZCONNECTIONS;
+//}
+
+@EndUserText.label: 'connections test'
+@MappingRole: true
+define role ZCONNECTIONS {
+    grant select on ZCONNECTIONS
+        where ( CarrierId ) = aspect pfcg_auth( ZBM, ZCARR );
+}

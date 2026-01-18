@@ -1,0 +1,6 @@
+@EndUserText.label: 'Access Control for S4D401 package'
+@MappingRole: true
+define role ZS4D401_AIRPORTS {
+    grant select on ZS4D401_AIRPORTS
+        where ( Country ) = aspect pfcg_auth( ZBM_FLIGHT, /DMO/CNTRY );
+}
