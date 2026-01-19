@@ -1,6 +1,3 @@
-*"* use this source file for the definition and implementation of
-*"* local helper classes, interface definitions and type
-*"* declarations
 
 CLASS lcl_plane DEFINITION.
   PUBLIC SECTION.
@@ -27,6 +24,7 @@ ENDCLASS.
 
 
 CLASS lcl_plane IMPLEMENTATION.
+
   METHOD constructor.
     manufacturer = iv_manufacturer.
     type = iv_type.
@@ -34,8 +32,10 @@ CLASS lcl_plane IMPLEMENTATION.
 
 
   METHOD get_attributes.
+
     rt_attributes = VALUE #( ( name = 'MANUFACTURER' value = manufacturer )
-    ( name = 'TYPE' value = type ) ) .
+                             ( name = 'TYPE'         value = type ) ) .
+
   ENDMETHOD.
 
 
@@ -71,8 +71,8 @@ CLASS lcl_cargo_plane IMPLEMENTATION.
 
 
     rt_attributes = VALUE #( ( name = 'MANUFACTURER' value = manufacturer )
-    ( name = 'TYPE' value = type )
-    ( name ='CARGO' value = cargo ) ).
+                             ( name = 'TYPE'         value = type )
+                             ( name = 'CARGO'        value = cargo ) ).
 
 
   ENDMETHOD.
@@ -99,7 +99,7 @@ CLASS lcl_passenger_plane IMPLEMENTATION.
 
 
     super->constructor( iv_manufacturer = iv_manufacturer iv_type = iv_type ).
-
+    seats = iv_seats.
 
   ENDMETHOD.
 

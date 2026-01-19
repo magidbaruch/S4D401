@@ -19,15 +19,18 @@ CLASS zcl_bm_solution IMPLEMENTATION.
 
 *  DATA test TYPE i.
 
-    CONSTANTS c_carrier_id TYPE /dmo/carrier_id VALUE 'LH'.
+    CONSTANTS c_carrier_id TYPE /dmo/carrier_id VALUE 'ZZ'.
 
     TRY.
-        DATA(carrier) = NEW lcl_carrier(  i_carrier_id = c_carrier_id ).
+
+        DATA(carrier)  = lcl_carrier=>get_instance(  i_carrier_id = c_carrier_id ).
         out->write(  name = `Carrier Overview`
                      data = carrier->get_output(  ) ).
 
-      CATCH cx_abap_invalid_value.
-        out->write( | Carrier { c_carrier_id } does not exist | ).
+      CATCH zcx_bm_failed INTO DATA(exc_inv).
+        out->write( exc_inv->get_text( ) ).
+      CATCH cx_abap_auth_check_exception.
+        "handle exception
     ENDTRY.
 
     IF carrier IS BOUND.
@@ -55,7 +58,7 @@ CLASS zcl_bm_solution IMPLEMENTATION.
 
       IF pass_flight IS BOUND.
         out->write( name = |Found a suitable passenger flight in { days_later } days:|
-                    data = pass_flight->get_description( ) ).
+                    data = pass_flight->get_output( ) ).
       ELSE.
         out->write( data = `No Passenger Flight found` ).
       ENDIF.
@@ -81,7 +84,8 @@ CLASS zcl_bm_solution IMPLEMENTATION.
 
       IF cargo_flight IS BOUND.
         out->write( name = |Found a suitable cargo flight in { days_later2 } days:|
-                    data = cargo_flight->get_description( ) ).
+*                    data = cargo_flight->get_description( ) ).
+                    data = cargo_flight->get_output( ) ).
       ELSE.
         out->write( data = `No cargo flight found` ).
       ENDIF.
